@@ -1,0 +1,34 @@
+name: local_language_modeling
+debug: true
+environment:
+  image: determinedai/environments:cuda-11.3-pytorch-1.12-tf-2.8-gpu-0.21.0
+resources:
+  slots_per_trial: 1
+searcher:
+  name: single
+  metric: eval_loss
+hyperparameters:
+  training_arguments:
+    learning_rate: 1e-5
+    fp16: false  
+entrypoint: >-
+  python run_clm.py
+  --model_name_or_path gpt2
+  --dataset_name wikitext
+  --dataset_config_name wikitext-2-raw-v1
+  --do_train
+  --do_eval
+  --max_steps 100
+  --logging_strategy steps
+  --logging_steps 10
+  --output_dir ./output
+  --eval_steps 10
+  --evaluation_strategy steps
+  --save_total_limit 3
+  --seed 1337
+  --save_strategy steps
+  --save_steps 20
+  --per_device_train_batch_size 2
+  --per_device_eval_batch_size 2
+  --trust_remote_code true
+max_restarts: 0
